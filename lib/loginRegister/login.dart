@@ -1,13 +1,8 @@
+import 'package:csi_library/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'My_Textfield.dart';
-
-// class MyLogin extends StatefulWidget {
-//   const MyLogin({Key? key}) : super(key: key);
-
-//   @override
-//   State<MyLogin> createState() => ();
-// }
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,6 +10,45 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> signInWithEmailAndPassword() async {
+    if (_isValid()) {
+      try {
+        print("calledddddddddd");
+        await Auth().signInWithEmailAndPassword(
+            email: _emailController.text, password: _passwordController.text);
+        Navigator.pushNamed(context, 'homepage');
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'An error occurred')),
+        );
+      }
+    }
+  }
+
+  bool _isValid() {
+    bool validEmail = _emailController.text.contains(
+        RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}"));
+    bool validPassword = _passwordController
+        .text.isNotEmpty; // You can add more password rules here
+
+    if (!validEmail) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid email')),
+      );
+    }
+
+    if (!validPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password cannot be empty')),
+      );
+    }
+
+    return validEmail && validPassword;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(
@@ -45,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -67,9 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 child: Text('Login'),
-                onPressed: () {
-                  Navigator.pushNamed(context, 'homepage');
-                },
+                onPressed: signInWithEmailAndPassword,
               ),
               SizedBox(height: 15),
               Text(
@@ -101,9 +135,36 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   foregroundColor: MaterialStateProperty.all(Colors.black),
                 ),
-                onPressed: () {
-                  GoogleSignIn().signIn();
-                },
+               onPressed: () async {
+  try {
+     final googleSignIn = GoogleSignIn();
+       await googleSignIn.signOut();
+    final googleSignInAccount = await GoogleSignIn().signIn();
+
+    if (googleSignInAccount != null) {
+      final googleSignInAuthentication = await googleSignInAccount.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      Navigator.pushNamed(context, 'homepage');
+    } else {
+      // User cancelled the sign-in process
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign-in cancelled by user')),
+      );
+    }
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error signing in: $error')),
+    );
+  }
+},
+
               ),
             ],
           ),

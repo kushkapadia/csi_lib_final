@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "808650292640",
+    "project_id": "csi-lib-app",
+    "storage_bucket": "csi-lib-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808650292640:android:19f5c9e5bc30a570cd38c5",
+        "android_client_info": {
+          "package_name": "com.example.csi_lib"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808650292640-tmaj4osa7pcl1goma8bqrvi9ecv6d9k3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.csi_lib",
+            "certificate_hash": "6776e79bd846ad3cfbb91f2ae5d066fa222c05a6"
+          }
+        },
+        {
+          "client_id": "808650292640-m3fppt06bf264g8diuk01i18f3t9m6rr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOCTsUyiDO1GuzQzvRDd-pWKpBhtA3LRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808650292640-m3fppt06bf264g8diuk01i18f3t9m6rr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "808650292640-7v6t62p43718b5b8ckntu8caooj4qpga.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.csiLib.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
