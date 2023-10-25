@@ -20,7 +20,7 @@ void main() async {
 
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection("books").get();
   for(var doc in snapshot.docs){
-    print(  " hii" +doc.data.toString());
+    print(  " hii" +doc.data().toString());
   }
   runApp(const MyApp());
 }

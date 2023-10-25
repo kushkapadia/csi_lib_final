@@ -306,7 +306,19 @@ class _MainPageState extends State<MainPage> {
                        .collection('books')
                         .snapshots(),
                         builder: ((context, snapshot) {
-                          if(snapshot.connectionState==ConnectionState.active){
+                          if(snapshot.connectionState==ConnectionState.waiting){
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          else if(snapshot.hasError){
+                            return Text('Error');
+                          }
+                          else if(!snapshot.hasData){
+                            return Text('No data');
+                          }
+
+                          else if(snapshot.connectionState==ConnectionState.active){
                             if(snapshot.data!=null){
                                   return ListView.builder(
                                     itemCount: snapshot.data!.docs.length,
@@ -319,7 +331,7 @@ class _MainPageState extends State<MainPage> {
                                                 image: products['image'],
                                                 genre: products['genre'],
                                                 author: products['author'],
-                                                text: products['text'],
+                                                text: products['title'],
                                               );
                                             } 
 
@@ -327,7 +339,14 @@ class _MainPageState extends State<MainPage> {
                                     );
                             }
                             else{
-                              return  const SnackBar(content: Text('NO DATA'));
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No Data'),
+                      ),
+                    );
+                  });
+                  return Center();
                             }
 
                           }
