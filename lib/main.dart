@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           theme: ThemeData(),
           debugShowCheckedModeBanner: false,
-          initialRoute: 'login',
+          initialRoute: 'homepage',
           routes: {
             'login': (context) => LoginPage(),
             'register': (context) => MyRegister(),

@@ -13,43 +13,49 @@ class ProductTile extends StatefulWidget {
 class _ProductTileState extends State<ProductTile> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-         margin: const EdgeInsets.only(bottom: 15),
-        child: Row(
-          children: [
-            Container(
-                margin: const EdgeInsets.only(left: 10,right: 10,bottom: 10),
-                child:ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                      child:  Image.network(widget.image,width: 100,height: 100,),
-                )
-                    
-            ),
-            
-    
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(widget.genre,style: const TextStyle(fontSize: 16),),
-                Text(widget.text,style: const TextStyle(fontSize: 24 ,fontWeight: FontWeight.bold),),
-                Text(widget.author,style: const TextStyle(fontSize: 12),),
-        const Divider(thickness: 0.5,color: Colors.black),
-    
-              ],
-            ),
-    
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-              child: IconButton(onPressed: (){
-    
-              }, icon: const Icon(Icons.arrow_forward_ios)),
+    return Container(
+       margin: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        children: [
+          Expanded(
+            child:  Container(
+             // margin: const EdgeInsets.only(left: 10,right: 10,bottom: 10),
+              child:ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                    child:  Image.network(widget.image,width: 100,height: 100,),
+              )
+                  
           ),
-            
+          ),
+          
+      Expanded(
+         child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(widget.genre,style: const TextStyle(fontSize: 16),),
+              Text(widget.text,style: const TextStyle(fontSize: 20 ,fontWeight: FontWeight.bold),),
+              Text(widget.author,style: const TextStyle(fontSize: 12),),
     
-          ],
     
+            ],
+          ),
+      ),
+    
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+            child: IconButton(
+              onPressed: (){
+            //     Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => BookPage(productTile: ProductTile,)),
+            // );
+            }, 
+            icon: const Icon(Icons.arrow_forward_ios)),
         ),
+          
+    
+        ],
+    
       ),
     );
   }
