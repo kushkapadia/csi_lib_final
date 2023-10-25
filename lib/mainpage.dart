@@ -83,38 +83,38 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Future<List<ProductTile>> getItems() async {
-    print("Called");
-    final response = await http.get(
-      Uri.parse(
-          "https://firestore.googleapis.com/v1/projects/csi-lib-app/databases/(default)/documents/books"),
-    );
+  // Future<List<ProductTile>> getItems() async {
+  //   print("Called");
+  //   final response = await http.get(
+  //     Uri.parse(
+  //         "https://firestore.googleapis.com/v1/projects/csi-lib-app/databases/(default)/documents/books"),
+  //   );
 
-    if (response.statusCode >= 400) {
-      throw Exception('Failed To load data');
-    }
-    if (response.body == 'null') {
-      return [];
-    }
+  //   if (response.statusCode >= 400) {
+  //     throw Exception('Failed To load data');
+  //   }
+  //   if (response.body == 'null') {
+  //     return [];
+  //   }
 
-    Map<String, dynamic> data = jsonDecode(response.body);
-    List<ProductTile> tempList = [];
-    print(data);
-    // for (final val in data.entries) {
-    //   tempList.add(
-    //     ProductTile(
-    //       image: val[fields],
-    //       genre: val.value['name'],
-    //       author: val.value['quantity'],
-    //       text:
-    //     ),
-    //   );
-    // }
-    return tempList;
-  }
+  //   Map<String, dynamic> data = jsonDecode(response.body);
+  //   List<ProductTile> tempList = [];
+  //   print(data);
+  //   // for (final val in data.entries) {
+  //   //   tempList.add(
+  //   //     ProductTile(
+  //   //       image: val[fields],
+  //   //       genre: val.value['name'],
+  //   //       author: val.value['quantity'],
+  //   //       text:
+  //   //     ),
+  //   //   );
+  //   // }
+  //   return tempList;
+  // }
 
   void initState() {
-    getItems();
+    //getItems();
     super.initState();
   }
 
@@ -301,62 +301,67 @@ class _MainPageState extends State<MainPage> {
                   //             text: productTile.text),
                   //       );
                   //     }),
-
                   child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
-                        .collection('books')
+                       .collection('books')
                         .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Something went wrong');
-                      }
+                        builder: ((context, snapshot) {
+                          if(snapshot.connectionState==ConnectionState.active){
+                            if(snapshot.data!=null){
+                                  return ListView.builder(
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder:(context,index){
+                          
+                                     Map<String,dynamic> products =snapshot.data!.docs[index].data() as Map<String,dynamic>;
+                                      print(products['genre']);
+                                       {
+                                              return ProductTile(
+                                                image: products['image'],
+                                                genre: products['genre'],
+                                                author: products['author'],
+                                                text: products['text'],
+                                              );
+                                            } 
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(); // Show a loading indicator while waiting
-                      }
-                      if (snapshot.hasData) {
-                        print(snapshot.data);
-                      }
+                                    },
+                                    );
+                            }
+                            else{
+                              return  const SnackBar(content: Text('NO DATA'));
+                            }
 
-                      // Assuming the data you're interested in is in a field named 'products'
-                      List<ProductTile> products =
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-
-                        Map<String, dynamic> data =
-                            document.data() as Map<String, dynamic>;
-                        print("helooooo" + data['text']);
-
-                        return ProductTile(
-                          image: data['image'],
-                          genre: "test",
-                          text: data['text'],
-                          author: data['author'],
-                          // ... and so on for other fields
-                        );
-                      }).toList();
-
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 200,
-                          child: ListView.builder(
-                            itemCount: products.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              ProductTile product = products[index];
-                              return ProductTile(
-                                image: product.image,
-                                genre: product.genre,
-                                author: product.author,
-                                text: product.text,
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
+                          }
+                          else{
+                            return const Center(
+                                  child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
                   ),
+
+                 
+
+                  //     Padding(
+                  //       padding: const EdgeInsets.all(8.0),
+                  //       child: Container(
+                  //         height: 200,
+                  //         child: ListView.builder(
+                  //           itemCount: products.length,
+                  //           scrollDirection: Axis.horizontal,
+                  //           itemBuilder: (context, index) {
+                  //             ProductTile product = products[index];
+                  //             return ProductTile(
+                  //               image: product.image,
+                  //               genre: product.genre,
+                  //               author: product.author,
+                  //               text: product.text,
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ),
               ),
             ),

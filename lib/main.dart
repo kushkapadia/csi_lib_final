@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csi_library/cart_provider.dart';
 import 'package:csi_library/home_page.dart';
 import 'package:csi_library/second_page.dart';
@@ -14,6 +17,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection("books").get();
+  for(var doc in snapshot.docs){
+    print(  " hii" +doc.data.toString());
+  }
   runApp(const MyApp());
 }
 
@@ -29,7 +37,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           theme: ThemeData(),
           debugShowCheckedModeBanner: false,
-          initialRoute: 'login',
+          initialRoute: 'homepage',
           routes: {
             'login': (context) => LoginPage(),
             'register': (context) => MyRegister(),
