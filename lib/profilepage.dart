@@ -1,5 +1,6 @@
 import 'package:csi_library/widgets/apptext.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -7,14 +8,12 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-        appBar: AppBar(
-          title: Text('My Profile'),
-          backgroundColor: Colors.blue,
-        ),
-        body: ProfileBody(),
-      );
-    
+      appBar: AppBar(
+        title: Text('My Profile'),
+        backgroundColor: Colors.blue,
+      ),
+      body: ProfileBody(),
+    );
   }
 }
 
@@ -27,7 +26,8 @@ class ProfileBody extends StatelessWidget {
         children: <Widget>[
           CircleAvatar(
             radius: 60,
-            backgroundImage: AssetImage('assets/profile_picture.jpg'), // Add your image path
+            backgroundImage:
+                AssetImage('assets/profile_picture.jpg'), // Add your image path
           ),
           SizedBox(height: 16.0),
           Text(
@@ -80,11 +80,18 @@ class ProfileBody extends StatelessWidget {
           ),
           SizedBox(height: 24.0),
           TextButton(
-            onPressed: () {
-              // Implement a log out action
+            onPressed: () async {
+              try {
+                final googleSignIn = GoogleSignIn();
+                await googleSignIn.signOut();
+                Navigator.pushReplacementNamed(context, 'login');
+              } catch (e) {
+                print(e);
+              }
             },
-            style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red),),
-            
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.red),
+            ),
             child: Text(
               'Log Out',
               style: TextStyle(
@@ -98,5 +105,3 @@ class ProfileBody extends StatelessWidget {
     );
   }
 }
-
-    

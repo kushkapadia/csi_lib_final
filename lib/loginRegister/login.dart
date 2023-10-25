@@ -16,10 +16,11 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> signInWithEmailAndPassword() async {
     if (_isValid()) {
       try {
+        
         print("calledddddddddd");
         await Auth().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
-        Navigator.pushNamed(context, 'homepage');
+        Navigator.pushReplacementNamed(context, 'homepage');
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'An error occurred')),
@@ -151,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
 
-      Navigator.pushNamed(context, 'homepage');
+          Navigator.pushReplacementNamed(context, 'homepage');
     } else {
       // User cancelled the sign-in process
       ScaffoldMessenger.of(context).showSnackBar(
