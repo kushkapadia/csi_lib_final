@@ -1,12 +1,10 @@
 import 'package:csi_library/cart_provider.dart';
 import 'package:csi_library/home_page.dart';
-import 'package:csi_library/second_page.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'loginRegister/login.dart';
 import 'loginRegister/register.dart';
+import 'second_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +27,7 @@ class MyApp extends StatelessWidget {
               'login': (context) => LoginPage(),
               'register': (context) => MyRegister(),
               'homepage': (context) => HomePage(),
+              'secondpage':(context)=>SecondPage(),
             }),
       
     );

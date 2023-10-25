@@ -7,47 +7,96 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 175,
-            decoration: const BoxDecoration(
-              color: Color.fromRGBO(42, 74, 193, 1), 
-            ),
-            child: Row(
-           
-              children: [
-                IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_back_ios,color: Colors.white,)),
-                Container( margin : EdgeInsets.only(left: 65),child :AppText(text:'Your Profile'),),
-              ],
+      
+        appBar: AppBar(
+          title: Text('My Profile'),
+          backgroundColor: Colors.blue,
+        ),
+        body: ProfileBody(),
+      );
+    
+  }
+}
+
+class ProfileBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        children: <Widget>[
+          CircleAvatar(
+            radius: 60,
+            backgroundImage: AssetImage('assets/profile_picture.jpg'), // Add your image path
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            'John Doe',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
-              const SizedBox(height: 250,),
-              Center(
-             child : Container(
-                 width: 150,
-            height: 150,
-             decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: NetworkImage(
-                    'https://cdn.dribbble.com/users/374672/screenshots/4016181/media/f8722787e4cb396b60416cab0ad55ce6.gif'), // Replace with your image URL
-                fit: BoxFit.cover,
-              ),
-             ),
-              ),
-              ),
+          Text(
+            'Library Enthusiast',
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Colors.grey,
+            ),
+          ),
+          SizedBox(height: 24.0),
+          Divider(),
+          SizedBox(height: 16.0),
+          ListTile(
+            leading: Icon(Icons.email),
+            title: Text('john.doe@email.com'),
+          ),
+          ListTile(
+            leading: Icon(Icons.phone),
+            title: Text('+1 (123) 456-7890'),
+          ),
+          ListTile(
+            leading: Icon(Icons.location_on),
+            title: Text('123 Library Street, Cityville'),
+          ),
+          SizedBox(height: 16.0),
+          Divider(),
+          SizedBox(height: 16.0),
+          Text(
+            'Favorite Genres',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 12.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Chip(label: Text('Mystery')),
+              Chip(label: Text('Fantasy')),
+              Chip(label: Text('Science Fiction')),
+            ],
+          ),
+          SizedBox(height: 24.0),
+          TextButton(
+            onPressed: () {
+              // Implement a log out action
+            },
+            style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red),),
             
-              const SizedBox(height: 45,),
-              const AppText( text:'hi@gmail.com',color: Colors.black,size: 20,),
-             // const SizedBox(height: 5,),
-             // const Text('_______________________'),
-              //  const SizedBox(height: 5,),
-              const AppText(text: 'Name : Siro',size: 20,color: Colors.black,),
+            child: Text(
+              'Log Out',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
+
+    
