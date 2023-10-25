@@ -1,8 +1,12 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:csi_library/widgets/apptext.dart';
 import 'package:csi_library/widgets/product_card.dart';
 import 'package:csi_library/widgets/product_tile.dart';
 import 'BookPage.dart';
+import 'package:http/http.dart' as http;
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -12,6 +16,9 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final CollectionReference _books =
+      FirebaseFirestore.instance.collection('books');
+
   int _currentIndex = 0;
   List<ProductCard> products = [
     const ProductCard(
@@ -74,6 +81,41 @@ class _MainPageState extends State<MainPage> {
     } else {
       return productcards.where((element) => element.genre == menu).toList();
     }
+  }
+
+  Future<List<ProductTile>> getItems() async {
+    print("Called");
+    final response = await http.get(
+      Uri.parse(
+          "https://firestore.googleapis.com/v1/projects/csi-lib-app/databases/(default)/documents/books"),
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception('Failed To load data');
+    }
+    if (response.body == 'null') {
+      return [];
+    }
+
+    Map<String, dynamic> data = jsonDecode(response.body);
+    List<ProductTile> tempList = [];
+    print(data);
+    // for (final val in data.entries) {
+    //   tempList.add(
+    //     ProductTile(
+    //       image: val[fields],
+    //       genre: val.value['name'],
+    //       author: val.value['quantity'],
+    //       text:
+    //     ),
+    //   );
+    // }
+    return tempList;
+  }
+
+  void initState() {
+    getItems();
+    super.initState();
   }
 
   @override
@@ -161,15 +203,16 @@ class _MainPageState extends State<MainPage> {
                           itemBuilder: (context, index) {
                             ProductCard product = products[index];
                             return ProductCard(
-                                image: product.image,
-                                genre: product.genre,
-                                title: product.title,
-                                
-                                );
+                              image: product.image,
+                              genre: product.genre,
+                              title: product.title,
+                            );
                           }),
                     ),
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
                   // menu
                   Container(
@@ -185,9 +228,9 @@ class _MainPageState extends State<MainPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                     _currentIndex = index;
-                                     selectedMenu = menu[_currentIndex];
-                                   // Navigator.pushNamed(context, 'secondpage');
+                                    _currentIndex = index;
+                                    selectedMenu = menu[_currentIndex];
+                                    // Navigator.pushNamed(context, 'secondpage');
                                   });
                                 },
                                 child: Text(
@@ -224,8 +267,7 @@ class _MainPageState extends State<MainPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                decoration: const BoxDecoration(
-                    ),
+                decoration: const BoxDecoration(),
                 child: Container(
                   width: double.maxFinite,
                   height: 300,
@@ -235,30 +277,86 @@ class _MainPageState extends State<MainPage> {
                         topRight: Radius.circular(20)),
                     color: Colors.white,
                   ),
-                  child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: getFilteredProductTiles(selectedMenu).length,
-                      itemBuilder: (context, index) {
-                        List<ProductTile> selectedProducts =
-                            getFilteredProductTiles(selectedMenu);
-                        ProductTile productTile = selectedProducts[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    BookPage(productTile: productcards[index]),
-                              ),
-                            );
-                          },
-                          child: ProductTile(
-                              image: productTile.image,
-                              genre: productTile.genre,
-                              author: productTile.author,
-                              text: productTile.text),
+                  // child: ListView.builder(
+                  //     scrollDirection: Axis.vertical,
+                  //     itemCount: getFilteredProductTiles(selectedMenu).length,
+                  //     itemBuilder: (context, index) {
+                  //       List<ProductTile> selectedProducts =
+                  //           getFilteredProductTiles(selectedMenu);
+                  //       ProductTile productTile = selectedProducts[index];
+                  //       return GestureDetector(
+                  //         onTap: () {
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //               builder: (context) =>
+                  //                   BookPage(productTile: productcards[index]),
+                  //             ),
+                  //           );
+                  //         },
+                  //         child: ProductTile(
+                  //             image: productTile.image,
+                  //             genre: productTile.genre,
+                  //             author: productTile.author,
+                  //             text: productTile.text),
+                  //       );
+                  //     }),
+
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('books')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Something went wrong');
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // Show a loading indicator while waiting
+                      }
+                      if (snapshot.hasData) {
+                        print(snapshot.data);
+                      }
+
+                      // Assuming the data you're interested in is in a field named 'products'
+                      List<ProductTile> products =
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+
+                        Map<String, dynamic> data =
+                            document.data() as Map<String, dynamic>;
+                        print("helooooo" + data['text']);
+
+                        return ProductTile(
+                          image: data['image'],
+                          genre: "test",
+                          text: data['text'],
+                          author: data['author'],
+                          // ... and so on for other fields
                         );
-                      }),
+                      }).toList();
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 200,
+                          child: ListView.builder(
+                            itemCount: products.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              ProductTile product = products[index];
+                              return ProductTile(
+                                image: product.image,
+                                genre: product.genre,
+                                author: product.author,
+                                text: product.text,
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
