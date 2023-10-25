@@ -18,10 +18,10 @@ class _HomePageState extends State<HomePage> {
   int _currentindex=0;
 
 //  int currentindex=0;
-final tabs=[  MainPage(),
-Books(),
+final tabs=  [  const MainPage(),
+const Books(),
 Cart(),
-ProfilePage(),
+const ProfilePage(),
 
 
 ];

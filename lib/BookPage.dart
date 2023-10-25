@@ -20,64 +20,62 @@ class _BookPageState extends State<BookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(children: [
-        Expanded(
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  child: GestureDetector(
-                    onTap: () {
-                      print('hii');
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
+        Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Expanded(
+              child: Container(
+                height: 30,
+                width: 30,
+                child: GestureDetector(
+                  onTap: () {
+                    print('hii');
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 175,
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(42, 74, 193, 1),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.white,
-                            )),
-                        Container(
-                          margin: EdgeInsets.only(left: 100),
-                          child: Center(child: AppText(text: 'Menu')),
-                        ),
-                      ],
-                    ),
+            ),
+            Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 175,
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(42, 74, 193, 1),
                   ),
-                  ClipRRect(
-                    child: Image.network(
-                      widget.productTile.image,
-                      fit: BoxFit.cover,
-                      height: 300,
-                      width: 225,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          )),
+                      Container(
+                        margin: EdgeInsets.only(left: 100),
+                        child: Center(child: AppText(text: 'Menu')),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                ClipRRect(
+                  child: Image.network(
+                    widget.productTile.image,
+                    fit: BoxFit.cover,
+                    height: 325,
+                    width: 225,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ],
+            ),
+          ],
         ),
         const SizedBox(
           height: 10,
