@@ -302,9 +302,9 @@ class _MainPageState extends State<MainPage> {
                   //       );
                   //     }),
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                       .collection('books')
-                        .snapshots(),
+                    stream: selectedMenu == 'Popular'
+      ? FirebaseFirestore.instance.collection('books').snapshots()
+      : FirebaseFirestore.instance.collection('books').where('genre', isEqualTo: selectedMenu).snapshots(),
                         builder: ((context, snapshot) {
                           if(snapshot.connectionState==ConnectionState.waiting){
                             return Center(
@@ -325,7 +325,6 @@ class _MainPageState extends State<MainPage> {
                                     itemBuilder:(context,index){
                           
                                      Map<String,dynamic> products =snapshot.data!.docs[index].data() as Map<String,dynamic>;
-                                      print(products['genre']);
                                        {
                                               return ProductTile(
                                                 image: products['image'],
