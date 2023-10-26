@@ -325,12 +325,29 @@ class _MainPageState extends State<MainPage> {
                                     itemBuilder:(context,index){
                           
                                      Map<String,dynamic> products =snapshot.data!.docs[index].data() as Map<String,dynamic>;
+                                        ProductTile productTile = ProductTile(
+                                                                      image: products['image'],
+                                                                      genre: products['genre'],
+                                                                      author: products['author'],
+                                                                      text: products['title'],
+                                                                    );
                                        {
-                                              return ProductTile(
+                                              return GestureDetector(
+                                                onTap: (){
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            BookPage(productTile: productTile),
+                                                      ),
+                                                                          );
+                                                },
+                                              child :ProductTile(
                                                 image: products['image'],
                                                 genre: products['genre'],
                                                 author: products['author'],
                                                 text: products['title'],
+                                              ),
                                               );
                                             } 
 
