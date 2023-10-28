@@ -128,7 +128,7 @@ class _MainPageState extends State<MainPage> {
           children: [
             Container(
               width: double.maxFinite,
-              height: 3 / 5 * MediaQuery.of(context).size.height,
+              height: 3.5 / 5 * MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('images/app_bg.png'),
@@ -205,7 +205,7 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 10,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -229,92 +229,73 @@ class _MainPageState extends State<MainPage> {
                   ),
 
                   // menu
-                  Container(
-                    height: 70,
-                    child: ListView.builder(
-                      itemCount: menu.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: ((context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _currentIndex = index;
-                                    selectedMenu = menu[_currentIndex];
-                                    // Navigator.pushNamed(context, 'secondpage');
-                                  });
-                                },
-                                child: Text(
-                                  menu[index],
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: _currentIndex == index
-                                        ? Colors.white
-                                        : Colors.grey.shade400,
-                                    fontFamily: 'PlayfairDisplay',
+                  Expanded(
+                    child: Container(
+                      height: 100,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: menu.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: ((context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _currentIndex = index;
+                                      selectedMenu = menu[_currentIndex];
+                                      // Navigator.pushNamed(context, 'secondpage');
+                                    });
+                                  },
+                                  child: Text(
+                                    menu[index],
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: _currentIndex == index
+                                          ? Colors.white
+                                          : Colors.grey.shade400,
+                                      fontFamily: 'PlayfairDisplay',
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 2),
-                                height: 5,
-                                width: _currentIndex == index ? 20 : 0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: _currentIndex == index
-                                      ? Colors.white
-                                      : Colors.grey.shade400.withOpacity(0.1),
+                                
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 2),
+                                  height: 5,
+                                  width: _currentIndex == index ? 20 : 0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: _currentIndex == index
+                                        ? Colors.white
+                                        : Colors.grey.shade400.withOpacity(0.1),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left:8.0,right: 8,bottom: 8),
               child: Container(
                 decoration: const BoxDecoration(),
                 child: Container(
                   width: double.maxFinite,
-                  height: 300,
+                  height: 250,
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20)),
                     color: Colors.white,
                   ),
-                  // child: ListView.builder(
-                  //     scrollDirection: Axis.vertical,
-                  //     itemCount: getFilteredProductTiles(selectedMenu).length,
-                  //     itemBuilder: (context, index) {
-                  //       List<ProductTile> selectedProducts =
-                  //           getFilteredProductTiles(selectedMenu);
-                  //       ProductTile productTile = selectedProducts[index];
-                  //       return GestureDetector(
-                  //         onTap: () {
-                  //           Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //               builder: (context) =>
-                  //                   BookPage(productTile: productcards[index]),
-                  //             ),
-                  //           );
-                  //         },
-                  //         child: ProductTile(
-                  //             image: productTile.image,
-                  //             genre: productTile.genre,
-                  //             author: productTile.author,
-                  //             text: productTile.text),
-                  //       );
-                  //     }),
                   child: StreamBuilder<QuerySnapshot>(
                     stream: selectedMenu == 'Popular'
                         ? FirebaseFirestore.instance

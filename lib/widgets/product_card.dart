@@ -23,7 +23,7 @@ class ProductCard extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.only(left: 20),
         child: Container(
-          height: 200,
+          height: 170,
           width: 225,
           //decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
