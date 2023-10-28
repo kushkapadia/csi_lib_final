@@ -20,6 +20,7 @@ class _MainPageState extends State<MainPage> {
       FirebaseFirestore.instance.collection('books');
 
   int _currentIndex = 0;
+  List<ProductTile> allproducts = [];
   List<ProductCard> products = [
     const ProductCard(
         image:
@@ -152,6 +153,11 @@ class _MainPageState extends State<MainPage> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: TextField(
+                          onChanged: (value) {
+                            filterProduct(value);
+                            print(value);
+                            print(allproducts);
+                          },
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -303,78 +309,79 @@ class _MainPageState extends State<MainPage> {
                   //     }),
                   child: StreamBuilder<QuerySnapshot>(
                     stream: selectedMenu == 'Popular'
-      ? FirebaseFirestore.instance.collection('books').snapshots()
-      : FirebaseFirestore.instance.collection('books').where('genre', isEqualTo: selectedMenu).snapshots(),
-                        builder: ((context, snapshot) {
-                          if(snapshot.connectionState==ConnectionState.waiting){
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          else if(snapshot.hasError){
-                            return Text('Error');
-                          }
-                          else if(!snapshot.hasData){
-                            return Text('No data');
-                          }
+                        ? FirebaseFirestore.instance
+                            .collection('books')
+                            .snapshots()
+                        : FirebaseFirestore.instance
+                            .collection('books')
+                            .where('genre', isEqualTo: selectedMenu)
+                            .snapshots(),
+                    builder: ((context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error');
+                      } else if (!snapshot.hasData) {
+                        return Text('No data');
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.active) {
+                        if (snapshot.data != null) {
+                          allproducts.clear();
 
-                          else if(snapshot.connectionState==ConnectionState.active){
-                            if(snapshot.data!=null){
-                                  return ListView.builder(
-                                    itemCount: snapshot.data!.docs.length,
-                                    itemBuilder:(context,index){
-                          
-                                     Map<String,dynamic> products =snapshot.data!.docs[index].data() as Map<String,dynamic>;
-                                        ProductTile productTile = ProductTile(
-                                                                      image: products['image'],
-                                                                      genre: products['genre'],
-                                                                      author: products['author'],
-                                                                      text: products['title'],
-                                                                    );
-                                       {
-                                              return GestureDetector(
-                                                onTap: (){
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            BookPage(productTile: productTile),
-                                                      ),
-                                                                          );
-                                                },
-                                              child :ProductTile(
-                                                image: products['image'],
-                                                genre: products['genre'],
-                                                author: products['author'],
-                                                text: products['title'],
-                                              ),
-                                              );
-                                            } 
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> products =
+                                  snapshot.data!.docs[index].data()
+                                      as Map<String, dynamic>;
 
-                                    },
+                              ProductTile productTile = ProductTile(
+                                image: products['image'],
+                                genre: products['genre'],
+                                author: products['author'],
+                                text: products['title'],
+                              );
+                              allproducts.add(productTile);
+                              {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookPage(productTile: productTile),
+                                      ),
                                     );
-                            }
-                            else{
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('No Data'),
-                      ),
-                    );
-                  });
-                  return Center();
-                            }
-
-                          }
-                          else{
-                            return const Center(
-                                  child: CircularProgressIndicator(),
+                                  },
+                                  child: ProductTile(
+                                    image: products['image'],
+                                    genre: products['genre'],
+                                    author: products['author'],
+                                    text: products['title'],
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        } else {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('No Data'),
+                              ),
                             );
-                          }
-                        }),
+                          });
+                          return Center();
+                        }
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
                   ),
-
-                 
 
                   //     Padding(
                   //       padding: const EdgeInsets.all(8.0),
@@ -404,5 +411,26 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
+  }
+
+  List<ProductTile> filterProduct(String enteredKeyword) {
+    List<ProductTile> results = [];
+
+    if (enteredKeyword.isEmpty) {
+      print("inside empty");
+      print(allproducts);
+      return allproducts;
+    } else {
+      results = allproducts
+          .where((element) =>
+              element.text.toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
+
+      // print(results);
+      // print(products);
+print("inside else");
+      print(results);
+      return results;
+    }
   }
 }
