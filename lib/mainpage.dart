@@ -147,11 +147,9 @@ class _MainPageState extends State<MainPage> {
                         height: 20,
                       ),
                       GestureDetector(
-                      
                         onTap: () {
                           Navigator.pushNamed(context, 'secondpage');
                         },
-                        
                         child: Container(
                           width: 9 / 10 * MediaQuery.of(context).size.width,
                           height: 50,

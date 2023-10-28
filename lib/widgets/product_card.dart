@@ -10,6 +10,8 @@ class ProductCard extends StatelessWidget {
       required this.genre,
       required this.title});
 
+  get text => null;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
