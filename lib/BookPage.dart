@@ -68,7 +68,7 @@ class _BookPageState extends State<BookPage> {
                   child: Image.network(
                     widget.productTile.image,
                     fit: BoxFit.cover,
-                    height: 325,
+                    height: 225,
                     width: 225,
                   ),
                   borderRadius: BorderRadius.circular(12),
@@ -157,6 +157,7 @@ class _BookPageState extends State<BookPage> {
             ),
             Column(
               children: [
+
                 AppText(
                   text: 'English',
                   color: Colors.black,
@@ -165,7 +166,7 @@ class _BookPageState extends State<BookPage> {
                 Text(
                   'Language',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
-                )
+                ),
               ],
             ),
             Padding(
@@ -195,21 +196,23 @@ class _BookPageState extends State<BookPage> {
           ],
         ),
         const SizedBox(
-          height: 15,
+          height: 10,
         ),
-        Container(
-          height: 100,
-          width: 300,
-          child: Column(
-            children: [
-              Text(
-                lorem(paragraphs: 1, words: 30),
-              )
-            ],
+        Expanded(
+          child: Container(
+            height: 100,
+            width: 300,
+            child: Column(
+              children: [
+                Text(
+                  lorem(paragraphs: 1, words: 20),
+                )
+              ],
+            ),
           ),
         ),
         const SizedBox(
-          height: 15,
+          height: 10,
         ),
 
         ElevatedButton(
