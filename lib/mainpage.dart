@@ -20,7 +20,9 @@ class _MainPageState extends State<MainPage> {
       FirebaseFirestore.instance.collection('books');
 
   int _currentIndex = 0;
-  List<ProductTile> allproducts = [];
+  var allproducts =FirebaseFirestore.instance
+                            .collection('books')
+                            .snapshots();
   List<ProductCard> products = [
     const ProductCard(
         image:
@@ -154,9 +156,8 @@ class _MainPageState extends State<MainPage> {
                         ),
                         child: TextField(
                           onChanged: (value) {
-                            filterProduct(value);
-                            print(value);
-                            print(allproducts);
+                           // filterProduct(value);
+                            
                           },
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
@@ -328,7 +329,7 @@ class _MainPageState extends State<MainPage> {
                       } else if (snapshot.connectionState ==
                           ConnectionState.active) {
                         if (snapshot.data != null) {
-                          allproducts.clear();
+                          // allproducts.clear();
 
                           return ListView.builder(
                             itemCount: snapshot.data!.docs.length,
@@ -343,7 +344,7 @@ class _MainPageState extends State<MainPage> {
                                 author: products['author'],
                                 text: products['title'],
                               );
-                              allproducts.add(productTile);
+                           
                               {
                                 return GestureDetector(
                                   onTap: () {
@@ -413,24 +414,24 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  List<ProductTile> filterProduct(String enteredKeyword) {
-    List<ProductTile> results = [];
+//   List<ProductTile> filterProduct(String enteredKeyword) {
+//     List<ProductTile> results = [];
 
-    if (enteredKeyword.isEmpty) {
-      print("inside empty");
-      print(allproducts);
-      return allproducts;
-    } else {
-      results = allproducts
-          .where((element) =>
-              element.text.toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
+//     if (enteredKeyword.isEmpty) {
+//       print("inside empty");
+//       print(allproducts);
+//       return allproducts;
+//     } else {
+//       results = allproducts
+//           .where((element) =>
+//               element.text.toLowerCase().contains(enteredKeyword.toLowerCase()))
+//           .toList();
 
-      // print(results);
-      // print(products);
-print("inside else");
-      print(results);
-      return results;
-    }
-  }
+//       // print(results);
+//       // print(products);
+// print("inside else");
+//       print(results);
+//       return results;
+//     }
+//   }
 }
