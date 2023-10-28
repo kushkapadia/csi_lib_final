@@ -146,32 +146,42 @@ class _MainPageState extends State<MainPage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Container(
-                        width: 9 / 10 * MediaQuery.of(context).size.width,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: TextField(
-                          onChanged: (value) {
-                            filterProduct(value);
-                            print(value);
-                            print(allproducts);
-                          },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              borderSide: BorderSide.none,
+                      GestureDetector(
+                      
+                        onTap: () {
+                          Navigator.pushNamed(context, 'secondpage');
+                        },
+                        
+                        child: Container(
+                          width: 9 / 10 * MediaQuery.of(context).size.width,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: TextField(
+                            // onChanged: (value) {
+                            //   setState(() {
+                            //     filterProduct(value);
+                            //   });
+
+                            //   print(value);
+                            //   print(allproducts);
+                            // },
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: const Color.fromRGBO(33, 64, 181, 1),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 10),
+                              hintText: 'What would you like to read?',
+                              hintStyle: TextStyle(color: Colors.grey.shade400),
+                              prefixIcon: const Icon(Icons.search),
+                              prefixIconColor: Colors.grey.shade400,
                             ),
-                            filled: true,
-                            fillColor: const Color.fromRGBO(33, 64, 181, 1),
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 10),
-                            hintText: 'What would you like to read?',
-                            hintStyle: TextStyle(color: Colors.grey.shade400),
-                            prefixIcon: const Icon(Icons.search),
-                            prefixIconColor: Colors.grey.shade400,
                           ),
                         ),
                       ),
@@ -428,7 +438,7 @@ class _MainPageState extends State<MainPage> {
 
       // print(results);
       // print(products);
-print("inside else");
+      print("inside else");
       print(results);
       return results;
     }
