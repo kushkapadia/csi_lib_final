@@ -16,6 +16,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  var tempList;
   final CollectionReference _books =
       FirebaseFirestore.instance.collection('books');
   List<ProductTile> searchResults = [];
@@ -116,8 +117,43 @@ class _MainPageState extends State<MainPage> {
   // }
 
   void initState() {
-    //getItems();
+    setState(() {
+      
+    tempList = getItems();
+    });
     super.initState();
+  }
+
+  Future<List<ProductTile>> getItems() async {
+    final response = await http.get(Uri.parse(
+        'https://csi-lib-app-default-rtdb.firebaseio.com/books.json'));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data.values.first);
+    }
+    if (response.statusCode >= 400) {
+      throw Exception('Failed To load data');
+    }
+    if (response.body == 'null') {
+      return [];
+    }
+
+    Map<String, dynamic> data = jsonDecode(response.body);
+    List<ProductTile> tempList = [];
+
+    for (final val in data.values) {
+      print(val['genre']);
+      tempList.add(
+        ProductTile(
+            genre: val['genre'],
+            author: val['author'],
+            image: val['image'],
+            text: val['title']),
+      );
+    }
+
+    return tempList;
   }
 
   @override
@@ -296,28 +332,42 @@ class _MainPageState extends State<MainPage> {
                         topRight: Radius.circular(20)),
                     color: Colors.white,
                   ),
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: selectedMenu == 'Popular'
-                        ? FirebaseFirestore.instance
-                            .collection('books')
-                            .snapshots()
-                        : FirebaseFirestore.instance
-                            .collection('books')
-                            .where('genre', isEqualTo: selectedMenu)
-                            .snapshots(),
-                    builder: ((context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error');
-                      } else if (!snapshot.hasData) {
-                        return Text('No data');
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.active) {
-                        if (snapshot.data != null) {
-                          allproducts.clear();
+                  child: FutureBuilder<List<ProductTile>>(
+  future: getItems(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      return Center(child: Text("Error fetching data"));
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return Center(child: Text("No data available"));
+    } else {
+      return ListView.builder(
+        itemCount: snapshot.data!.length,
+        itemBuilder: (context, index) {
+          ProductTile productTile = snapshot.data![index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookPage(productTile: productTile),
+                ),
+              );
+            },
+            child: ProductTile(
+              image: productTile.image,
+              genre: productTile.genre,
+              author: productTile.author,
+              text: productTile.text,
+            ),
+          );
+        },
+      );
+    }
+  },
+)
+
 
                           return 
                           isSearch.isEmpty? ListView.builder(
@@ -419,6 +469,7 @@ class _MainPageState extends State<MainPage> {
                     }),
                   ),
 
+
                   //     Padding(
                   //       padding: const EdgeInsets.all(8.0),
                   //       child: Container(
@@ -496,12 +547,27 @@ class _MainPageState extends State<MainPage> {
     List<ProductTile> results = [];
 
     if (enteredKeyword.isEmpty) {
+<<<<<<< HEAD
       return allproducts; // Show all products when the search keyword is empty
+=======
+      print("inside empty");
+      // print(allproducts);
+      return allproducts;
+>>>>>>> 845eeb51c40faf01cf138023047fe6da75d7f4a8
     } else {
       return allproducts
           .where(
               (element) => element.text.toLowerCase().contains(keyword))
           .toList();
+<<<<<<< HEAD
+=======
+
+      // print(results);
+      // print(products);
+      print("inside else");
+      // print(results);
+      return results;
+>>>>>>> 845eeb51c40faf01cf138023047fe6da75d7f4a8
     }
   }
 }
