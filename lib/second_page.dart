@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:csi_library/widgets/apptext.dart';
 import 'package:csi_library/widgets/product_card.dart';
@@ -58,6 +59,8 @@ List<ProductTile> getFilteredProductTiles(String menu) {
 }
 
 class _SecondPageState extends State<SecondPage> {
+  var searchName="";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,6 +174,17 @@ class _SecondPageState extends State<SecondPage> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: TextField(
+                           onChanged: (value) {
+                            setState(() {
+                              searchName = value;
+                             // filterProduct(value);
+                            });
+
+                               //print(value);
+                               //print(allproducts);
+                          },
+                              
+  
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -189,47 +203,169 @@ class _SecondPageState extends State<SecondPage> {
                         ),
                         
                       ),
-                      SizedBox(height: 30,),
-                  Container(
-                    height:  6.8/ 10 * MediaQuery.of(context).size.height,
-                    decoration:
-                        const BoxDecoration(color: Color.fromRGBO(42, 74, 193, 1)),
-                    child: Container(
-                      width: double.maxFinite,
-                       height:  7/ 10 * MediaQuery.of(context).size.height,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
-                        color: Colors.white,
-                      ),
-                      child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: getFilteredProductTiles(selectedMenu).length,
-                          itemBuilder: (context, index) {
-                            List<ProductTile> selectedProducts =
-                                getFilteredProductTiles(selectedMenu);
-                            ProductTile productTile = selectedProducts[index];
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        BookPage(productTile: productcards[index]),
+                      
+                  // Container(
+                  //   height:  6.8/ 10 * MediaQuery.of(context).size.height,
+                  //   decoration:
+                  //       const BoxDecoration(color: Color.fromRGBO(42, 74, 193, 1)),
+                  //   child: Container(
+                  //     width: double.maxFinite,
+                  //      height:  7/ 10 * MediaQuery.of(context).size.height,
+                  //     decoration: const BoxDecoration(
+                  //       borderRadius: BorderRadius.only(
+                  //           topLeft: Radius.circular(20),
+                  //           topRight: Radius.circular(20)),
+                  //       color: Colors.white,
+                  //     ),
+                  //     child: ListView.builder(
+                  //         scrollDirection: Axis.vertical,
+                  //         itemCount: getFilteredProductTiles(selectedMenu).length,
+                  //         itemBuilder: (context, index) {
+                  //           List<ProductTile> selectedProducts =
+                  //               getFilteredProductTiles(selectedMenu);
+                  //           ProductTile productTile = selectedProducts[index];
+                  //           return GestureDetector(
+                  //             onTap: () {
+                  //               Navigator.push(
+                  //                 context,
+                  //                 MaterialPageRoute(
+                  //                   builder: (context) =>
+                  //                       BookPage(productTile: productcards[index]),
+                  //                 ),
+                  //               );
+                  //             },
+                  //             child: ProductTile(
+                  //                 image: productTile.image,
+                  //                 genre: productTile.genre,
+                  //                 author: productTile.author,
+                  //                 text: productTile.text),
+                  //           );
+                  //         }),
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+             Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
+              child: Container(
+                height:  7/ 10 * MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(),
+                child: Container(
+                  width: double.maxFinite,
+                  height: 250,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    color: Colors.white,
+                  ),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: selectedMenu == 'Popular'
+                        ? FirebaseFirestore.instance
+                            .collection('books').
+                            
+                            
+                            orderBy('title')
+                            .startAt([searchName]).endAt(
+                                [searchName + "\uf8ff"])
+                            .snapshots()
+                        : FirebaseFirestore.instance
+                            .collection('books')
+                            
+                            .orderBy('title')
+                            .startAt([searchName]).endAt(
+                                [searchName + "\uf8ff"]).snapshots(),
+                    builder: ((context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error');
+                      } else if (!snapshot.hasData) {
+                        return Text('No data');
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.active) {
+                        if (snapshot.data != null) {
+                          
+
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data!.docs[index];
+                              Map<String, dynamic> products =
+                                  snapshot.data!.docs[index].data()
+                                      as Map<String, dynamic>;
+
+                              ProductTile productTile = ProductTile(
+                                image: products['image'],
+                                genre: products['genre'],
+                                author: products['author'],
+                                text: products['title'],
+                              );
+                              
+                              {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookPage(productTile: productTile),
+                                      ),
+                                    );
+                                  },
+                                  child: ProductTile(
+                                    image: products['image'],
+                                    genre: products['genre'],
+                                    author: products['author'],
+                                    text: products['title'],
                                   ),
                                 );
-                              },
-                              child: ProductTile(
-                                  image: productTile.image,
-                                  genre: productTile.genre,
-                                  author: productTile.author,
-                                  text: productTile.text),
+                              }
+                            },
+                          );
+                        } else {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('No Data'),
+                              ),
                             );
-                          }),
-                    ),
+                          });
+                          return Center();
+                        }
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
                   ),
-                ],
+
+                  //     Padding(
+                  //       padding: const EdgeInsets.all(8.0),
+                  //       child: Container(
+                  //         height: 200,
+                  //         child: ListView.builder(
+                  //           itemCount: products.length,
+                  //           scrollDirection: Axis.horizontal,
+                  //           itemBuilder: (context, index) {
+                  //             ProductTile product = products[index];
+                  //             return ProductTile(
+                  //               image: product.image,
+                  //               genre: product.genre,
+                  //               author: product.author,
+                  //               text: product.text,
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                ),
               ),
             ),
           ],

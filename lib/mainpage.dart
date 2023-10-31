@@ -18,7 +18,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final CollectionReference _books =
       FirebaseFirestore.instance.collection('books');
-
+  List<ProductTile> searchResults = [];
+  String isSearch = "";
   int _currentIndex = 0;
   List<ProductTile> allproducts = [];
   List<ProductCard> products = [
@@ -157,14 +158,14 @@ class _MainPageState extends State<MainPage> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: TextField(
-                            // onChanged: (value) {
-                            //   setState(() {
-                            //     filterProduct(value);
-                            //   });
-
-                            //   print(value);
-                            //   print(allproducts);
-                            // },
+                            onChanged: (value) {
+                              setState(() {
+                                isSearch = value.toString();
+                                 searchResults = filterProducts(value);
+                              });
+                             
+                              print(value);
+                            },
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -238,7 +239,8 @@ class _MainPageState extends State<MainPage> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: ((context, index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Column(
                               children: [
                                 GestureDetector(
@@ -260,7 +262,6 @@ class _MainPageState extends State<MainPage> {
                                     ),
                                   ),
                                 ),
-                                
                                 Container(
                                   margin: const EdgeInsets.only(bottom: 2),
                                   height: 5,
@@ -282,9 +283,8 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
             ),
-
             Padding(
-              padding: const EdgeInsets.only(left:8.0,right: 8,bottom: 8),
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
               child: Container(
                 decoration: const BoxDecoration(),
                 child: Container(
@@ -319,12 +319,16 @@ class _MainPageState extends State<MainPage> {
                         if (snapshot.data != null) {
                           allproducts.clear();
 
-                          return ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
+                          return 
+                          isSearch.isEmpty? ListView.builder(
+                            itemCount: isSearch == ""
+                                ? snapshot.data!.docs.length
+                                : searchResults.length,
                             itemBuilder: (context, index) {
                               Map<String, dynamic> products =
                                   snapshot.data!.docs[index].data()
                                       as Map<String, dynamic>;
+                              print(products['title']);
 
                               ProductTile productTile = ProductTile(
                                 image: products['image'],
@@ -333,6 +337,7 @@ class _MainPageState extends State<MainPage> {
                                 text: products['title'],
                               );
                               allproducts.add(productTile);
+                              print(allproducts);
                               {
                                 return GestureDetector(
                                   onTap: () {
@@ -344,12 +349,54 @@ class _MainPageState extends State<MainPage> {
                                       ),
                                     );
                                   },
-                                  child: ProductTile(
-                                    image: products['image'],
-                                    genre: products['genre'],
-                                    author: products['author'],
-                                    text: products['title'],
-                                  ),
+                                  child: isSearch == ""
+                                      ? ProductTile(
+                                          image: products['image'],
+                                          genre: products['genre'],
+                                          author: products['author'],
+                                          text: products['title'],
+                                        )
+                                      : searchResults[index],
+                                );
+                              }
+                            },
+                          ):ListView.builder(
+                            itemCount: isSearch == ""
+                                ? snapshot.data!.docs.length
+                                : searchResults.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> products =
+                                  snapshot.data!.docs[index].data()
+                                      as Map<String, dynamic>;
+                              print(products['title']);
+
+                              ProductTile productTile = ProductTile(
+                                image: products['image'],
+                                genre: products['genre'],
+                                author: products['author'],
+                                text: products['title'],
+                              );
+                              allproducts.add(productTile);
+                              print(allproducts);
+                              {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookPage(productTile: productTile),
+                                      ),
+                                    );
+                                  },
+                                  child: isSearch == ""
+                                      ? ProductTile(
+                                          image: products['image'],
+                                          genre: products['genre'],
+                                          author: products['author'],
+                                          text: products['title'],
+                                        )
+                                      : searchResults[index],
                                 );
                               }
                             },
@@ -402,24 +449,59 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  List<ProductTile> filterProduct(String enteredKeyword) {
+  // List<ProductTile> filterProduct(String enteredKeyword) {
+  //   List<ProductTile> results = [];
+  //   String keyword = enteredKeyword.toLowerCase().trim();
+  //   print(enteredKeyword);
+
+  //   if (enteredKeyword.isEmpty) {
+  //     print("inside empty");
+  //     // print(products);
+  //     print(results);
+  //     return allproducts;
+  //   } else {
+  //     results = allproducts
+  //         .where((element) =>
+  //             element.text.trim().toLowerCase().contains(keyword))
+  //         .toList();
+
+  //     print(results);
+  //     // print(products);
+  //     print("inside else");
+
+  //     print(results);
+  //     return results;
+  //   }
+  // }
+  // List<ProductTile> filterProducts(String enteredKeyword) {
+  //   List<ProductTile> results = [];
+  //   String keyword = enteredKeyword.toLowerCase().trim();
+
+  //   if (enteredKeyword.isEmpty) {
+  //     return allproducts; // Show all products when the search keyword is empty
+  //   } else {
+  //     results = allproducts.where((element) {
+  //       // You can use different conditions here based on your requirements
+  //       String productName = element.text.toLowerCase();
+  //       print("rohit");
+  //       print(productName);
+  //       return productName.contains(keyword);
+  //     }).toList();
+
+  //     return results;
+  //   }
+  // }
+  List<ProductTile> filterProducts(String enteredKeyword) {
+    String keyword = enteredKeyword.toLowerCase().trim();
     List<ProductTile> results = [];
 
     if (enteredKeyword.isEmpty) {
-      print("inside empty");
-      print(allproducts);
-      return allproducts;
+      return allproducts; // Show all products when the search keyword is empty
     } else {
-      results = allproducts
-          .where((element) =>
-              element.text.toLowerCase().contains(enteredKeyword.toLowerCase()))
+      return allproducts
+          .where(
+              (element) => element.text.toLowerCase().contains(keyword))
           .toList();
-
-      // print(results);
-      // print(products);
-      print("inside else");
-      print(results);
-      return results;
     }
   }
 }
